@@ -1,0 +1,87 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+    <title>Выбор маршрута</title>
+
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="css/bootstrap-theme.min.css">
+    <link rel="stylesheet" type="text/css" href="css/index.css">
+
+    <script type="application/javascript" src="js/jquery.min.js"></script>
+    <script type="application/javascript" src="js/handlebars.js"></script>
+    <script type="application/javascript" src="js/index.js"></script>
+</head>
+<body>
+
+<div class="navbar navbar-default">
+    <div class="container">
+        <h1>Выбор маршрута прокладки кабеля в кольцевой архитектуре</h1>
+    </div>
+</div>
+
+<div class="container">
+    <div>
+        <h2>1. Укажите количество узлов в сети:</h2>
+        <div class="container">
+            <input type="text" id="size" class="form-control" value="5">
+            <input type="button" id="set-size" class="btn btn-default" value="Применить">
+        </div>
+    </div>
+
+    <div>
+        <h2>2. Заполните таблицу расстояний между узлами:</h2>
+        <div class="container">
+            <div id="dist-table-wrapper">
+                <script id="dist-table-template" language="text/html">
+                    <table id="dist-table" class="table">
+                        <thead>
+                        <tr>
+                            <td></td>
+                            {{#each rows}}
+                                <td>{{sum @index 1}}</td>
+                            {{/each}}
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {{#each rows}}
+                        <tr>
+                            <td>{{sum @index 1}}</td>
+                            {{#each this}}
+                            <td>
+                                <input type="text" id="cell-{{@../index}}-{{@index}}" class="form-control dist-table-cell" value="{{this}}">
+                            </td>
+                            {{/each}}
+                        </tr>
+                        {{/each}}
+                        </tbody>
+                    </table>
+                </script>
+            </div>
+            <input type="button" id="calc" class="btn btn-default" value="Вычислить">
+        </div>
+    </div>
+    <div>
+        <h2>3. Результаты вычислений:</h2>
+        <div class="container">
+            <table class="table">
+                <thead>
+                <tr>
+                    <td>№</td>
+                    <td>Метод</td>
+                    <td>L</td>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

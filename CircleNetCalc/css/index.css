@@ -1,0 +1,15 @@
+body {
+    font-size: large;
+}
+
+#size {
+    width: 30%;
+}
+
+.dist-table-cell {
+    /*width: 2em;*/
+}
+
+.btn {
+    margin-top: 1em;
+}
