@@ -24,7 +24,7 @@
 <div class="container">
     <div>
         <h2>1. Укажите количество узлов в сети:</h2>
-        <div class="container">
+        <div class="container section-body">
             <input type="text" id="size" class="form-control" value="5">
             <input type="button" id="set-size" class="btn btn-default" value="Применить">
         </div>
@@ -32,7 +32,7 @@
 
     <div>
         <h2>2. Заполните таблицу расстояний между узлами:</h2>
-        <div class="container">
+        <div class="container section-body">
             <div id="dist-table-wrapper">
                 <script id="dist-table-template" language="text/html">
                     <table id="dist-table" class="table">
@@ -64,19 +64,27 @@
     </div>
     <div>
         <h2>3. Результаты вычислений:</h2>
-        <div class="container">
-            <table class="table">
+        <div class="container section-body">
+            <table id="results-table" class="table">
                 <thead>
                 <tr>
                     <td>№</td>
                     <td>Метод</td>
+                    <td>Последовательность</td>
                     <td>L</td>
                 </tr>
                 </thead>
                 <tbody>
+                <script id="results-row-template" language="text/html">
+                {{#each results}}
                 <tr>
-                    <td></td>
+                    <td>{{sum @index 1}}</td>
+                    <td>{{method}}</td>
+                    <td>{{value.seq}}</td>
+                    <td>{{value.l}}</td>
                 </tr>
+                {{/each}}
+                </script>
                 </tbody>
             </table>
         </div>
