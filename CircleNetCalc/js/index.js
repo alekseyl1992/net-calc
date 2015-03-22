@@ -60,6 +60,10 @@ function setSize(size) {
         var j = id[2];
 
         distTable[i][j] = value;
+        distTable[j][i] = value;
+
+        if (i == j)
+            return;
 
         var $mirrorCell = $('#cell-' + j + '-' + i);
         $mirrorCell.val(value);
@@ -247,8 +251,8 @@ function calcPrimeEuler() {
         }
 
         // close path
-        from = _.min([path[pathId], path[path.length - 1]]);
-        to = _.max([path[pathId], path[path.length - 1]]);
+        from = _.min([path[0], path[path.length - 1]]);
+        to = _.max([path[0], path[path.length - 1]]);
 
         var closeNode = _.find(nodeList, {
             i: from,
@@ -274,9 +278,162 @@ function calcPrimeEuler() {
 }
 
 function calcLittle() {
+    var table = _.cloneDeep(distTable);
+    var i = 0;
+    var j = 0;
+
+    for (i = 0; i < table.length; ++i) {
+        table[i][i] = Infinity;
+    }
+
+    var shouldStop = false;
+    var nodes = [];
+    while(true) {
+        for (i = 0; i < table.length; ++i) {
+            // find row min
+            var rowMin = Infinity;
+            for (j = 0; j < table.length; ++j) {
+                if (table[i][j] < rowMin)
+                    rowMin = table[i][j];
+            }
+
+            if (rowMin == Infinity || rowMin == 0)
+                continue;
+
+            // subtract min from row
+            for (j = 0; j < table.length; ++j) {
+                table[i][j] -= rowMin;
+            }
+        }
+
+        for (i = 0; i < table.length; ++i) {
+            // find col min
+            var colMin = Infinity;
+            for (j = 0; j < table.length; ++j) {
+                if (table[j][i] < colMin)
+                    colMin = table[j][i];
+            }
+
+            if (colMin == Infinity || colMin == 0)
+                continue;
+
+            // subtract min from col
+            for (j = 0; j < table.length; ++j) {
+                table[j][i] -= colMin;
+            }
+        }
+
+        var cols = [];
+        var rows = [];
+
+        for (i = 0; i < table.length; ++i) {
+            var row = {
+                min: Infinity,
+                zeroCount: 0
+            };
+
+            var col = {
+                min: Infinity,
+                zeroCount: 0
+            };
+
+            for (j = 0; j < table.length; ++j) {
+                if (table[i][j] == 0) {
+                    row.zeroCount++;
+                    if (row.zeroCount > 1)
+                        row.min = 0;
+                }
+                else if (table[i][j] < row.min)
+                    row.min = table[i][j];
+
+                if (table[j][i] == 0) {
+                    col.zeroCount++;
+                    if (col.zeroCount > 1)
+                        col.min = 0;
+                }
+                else if (table[j][i] < col.min)
+                    col.min = table[j][i];
+            }
+
+            cols.push(col);
+            rows.push(row);
+        }
+
+        var maxZeroCross = {
+            i: 0,
+            j: 0,
+            value: -Infinity
+        };
+
+        for (i = 0; i < table.length; ++i) {
+            for (j = 0; j < table.length; ++j) {
+                if (table[i][j] == 0) {
+                    var value = cols[j].min + rows[i].min;
+                    if (value > maxZeroCross.value)
+                        maxZeroCross = {
+                            i: i,
+                            j: j,
+                            value: value
+                        };
+                }
+            }
+        }
+
+        // exclude maxZeroCross
+        for (i = 0; i < table.length; ++i) {
+            table[i][maxZeroCross.j] = Infinity;
+            table[maxZeroCross.i][i] = Infinity;
+        }
+        table[maxZeroCross.j][maxZeroCross.i] = Infinity;
+
+        // save maxZeroCross
+        nodes.push(maxZeroCross);
+
+        if (maxZeroCross.value == Infinity) {
+            if (shouldStop)
+                break;
+            else
+                shouldStop = true;
+        }
+    }
+
+    // create path
+    var path = [];
+    var l = 0;
+
+    path.push(nodes[0].i);
+    var idToFind = nodes[0].j;
+    l += distTable[nodes[0].i][nodes[0].j];
+    nodes.splice(0, 1);
+
+    var len = nodes.length + 1;
+    while (path.length != len) {
+        var node = _.find(nodes, {i: idToFind});
+        if (node) {
+            idToFind = node.j;
+            path.push(node.i);
+            l += distTable[node.i][node.j];
+            nodes.remove(node);
+            continue;
+        }
+
+        node = _.find(nodes, {j: idToFind});
+        if (node) {
+            idToFind = node.i;
+            path.push(node.j);
+            l += distTable[node.j][node.i];
+            nodes.remove(node);
+            continue;
+        } else break;
+    }
+
+    // prepare path for output
+    path.push(path[0]);
+    path = _.map(path, function (p) { return p + 1; });
+
     return {
-        path: "5-4-3-2-1-5",
-        l: 100500
+        path: path.join('-'),
+        l: l
     };
 }
 
@@ -298,3 +455,10 @@ function _toNodeList (table) {
 
     return nodeList;
 }
+
+Array.prototype.remove = function (item) {
+    var i;
+    while((i = this.indexOf(item)) !== -1) {
+        this.splice(i, 1);
+    }
+};
