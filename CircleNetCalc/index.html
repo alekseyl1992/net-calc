@@ -48,7 +48,7 @@
                         <tbody>
                         {{#each rows}}
                         <tr>
-                            <td>{{sum @index 1}}</td>
+                            <td><b>{{sum @index 1}}</b></td>
                             {{#each this}}
                             <td>
                                 <input type="text" id="cell-{{@../index}}-{{@index}}" class="form-control dist-table-cell" value="{{this}}">
@@ -66,7 +66,7 @@
     <div>
         <h2>3. Результаты вычислений:</h2>
         <div class="container section-body">
-            <table id="results-table" class="table">
+            <table id="results-table" class="table table-striped">
                 <thead>
                 <tr>
                     <td>№</td>
@@ -81,8 +81,16 @@
                 <tr>
                     <td>{{sum @index 1}}</td>
                     <td>{{method}}</td>
-                    <td>{{value.path}}</td>
-                    <td>{{value.l}}</td>
+                    <td>
+                        {{#each values}}
+                            {{path}}<br>
+                        {{/each}}
+                    </td>
+                    <td>
+                        {{#each values}}
+                            {{l}}<br>
+                        {{/each}}
+                    </td>
                 </tr>
                 {{/each}}
                 </script>

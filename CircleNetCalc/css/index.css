@@ -17,3 +17,7 @@ body {
 .section-body {
     margin-left: 1em;
 }
+
+thead {
+    font-weight: bold;
+}
