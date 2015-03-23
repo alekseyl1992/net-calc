@@ -150,6 +150,11 @@ function buildPath(nodes) {
     }
     path.push(idToFind);
 
+    // prepare path to user
+    path = _.map(path, function (p) {
+        return p + 1;
+    });
+
     return {
         path: path.join('-'),
         l: l
