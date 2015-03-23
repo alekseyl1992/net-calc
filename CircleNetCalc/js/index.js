@@ -121,9 +121,9 @@ function prepareResults(entries) {
     return _.map(entries, function (entry) {
         return {
             method: entry.name,
-            values: _.sortBy(_.map(entry.results, function (result) {
+            values: _.uniq(_.sortBy(_.map(entry.results, function (result) {
                 return buildPath(result);
-            }), 'l')
+            }), 'l'))
         };
     });
 }
