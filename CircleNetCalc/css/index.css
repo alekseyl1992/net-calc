@@ -20,4 +20,13 @@ body {
 
 thead {
     font-weight: bold;
+    text-align: center;
+}
+
+input {
+    font-size: large !important;
+}
+
+table input {
+    text-align: center;
 }
