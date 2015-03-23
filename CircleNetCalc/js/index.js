@@ -123,7 +123,10 @@ function prepareResults(entries) {
             method: entry.name,
             values: _.uniq(_.sortBy(_.map(entry.results, function (result) {
                 return buildPath(result);
-            }), 'l'))
+            }), 'l'),
+                function (value) {
+                    return value.path;
+                })
         };
     });
 }
