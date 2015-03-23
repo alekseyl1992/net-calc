@@ -40,7 +40,10 @@ function setSize(size) {
     for (var i = 0; i < size; ++i) {
         var row = [];
         for (var j = 0; j < size; ++j) {
-            row[j] = undefined;
+            if (i == j)
+                row[j] = 0;
+            else
+                row[j] = undefined;
         }
         distTable[i] = row;
     }
@@ -75,52 +78,79 @@ function setSize(size) {
 }
 
 function calc() {
-    return renderResults();
+    //var msg = {
+    //    nn_alg: {
+    //        name: "Nearest Neighbor Algorithm",
+    //        results: [
+    //            [
+    //                {from: 1, to: 2, distance: 1},
+    //                {from: 2, to: 1, distance: 2}
+    //            ],
+    //            [
+    //                {from: 1, to: 2, distance: 2},
+    //                {from: 2, to: 1, distance: 3}
+    //            ]
+    //        ]
+    //    }
+    //};
+    //
+    //var preparedResults = prepareResults(msg);
+    //renderResults(preparedResults);
 
     $.ajax({
-        type: "GET",
+        type: "POST",
         contentType: "application/json",
         url: "/calc",
-        data: distTable
+        data: JSON.stringify({size: distTable.length, arr: distTable})
     })
         .done(function (msg) {
-            renderResults(msg);
+            var preparedResults = prepareResults(msg);
+            renderResults(preparedResults);
         })
         .fail(function (error) {
-            alert(error);
-        });
+            console.log("AJAX error: ", error);
+            alert("AJAX Error, watch your console log");
+        }
+    );
+}
+
+function prepareResults(entries) {
+    return _.map(entries, function (entry) {
+        return {
+            method: entry.name,
+            values: _.map(entry.results, function (result) {
+                return buildPath(result);
+            })
+        };
+    });
+}
+
+function buildPath(nodes) {
+    var path = [];
+    var l = 0;
+
+    var nextNode = nodes[0];
+    path.push(nextNode.from);
+    l += nextNode.distance;
+    var idToFind = nextNode.to;
+    nodes.remove(nextNode);
+
+    while (nodes.length != 0) {
+        nextNode = _.find(nodes, {from: idToFind});
+        path.push(nextNode.from);
+        l += nextNode.distance;
+        idToFind = nextNode.to;
+        nodes.remove(nextNode);
+    }
+    path.push(idToFind);
+
+    return {
+        path: path.join('-'),
+        l: l
+    };
 }
 
 function renderResults(results) {
-    results = [{
-        method: 'Метод "Иди в ближний"',
-        values: [{
-            path: '1-2-3-4-5-1',
-            l: 10
-        }, {
-            path: '1-3-2-4-5-1',
-            l: 20
-        }]
-    }, {
-        method: 'Метод Прима-Эйлера',
-        values: [{
-            path: '1-2-3-4-5-1',
-            l: 10
-        }, {
-            path: '1-3-2-4-5-1',
-            l: 20
-        }]
-    }, {
-        method: 'Метод Литтла',
-        values: [{
-            path: '1-2-3-4-5-1',
-            l: 10
-        }, {
-            path: '1-3-2-4-5-1',
-            l: 20
-        }]
-    }];
-
     var $resultsTable = $('#results-table').find('tbody');
     $resultsTable.empty();
 
