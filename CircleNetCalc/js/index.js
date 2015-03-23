@@ -34,18 +34,21 @@ $(function () {
     templates.resultsRow = Handlebars.compile(resultsRowHtml);
 });
 
-function setSize(size) {
-    distTable = [];
-
-    for (var i = 0; i < size; ++i) {
-        var row = [];
-        for (var j = 0; j < size; ++j) {
-            if (i == j)
-                row[j] = 0;
-            else
-                row[j] = undefined;
+function setSize(size, table) {
+    if (!table) {
+        distTable = [];
+        for (var i = 0; i < size; ++i) {
+            var row = [];
+            for (var j = 0; j < size; ++j) {
+                if (i == j)
+                    row[j] = 0;
+                else
+                    row[j] = undefined;
+            }
+            distTable[i] = row;
         }
-        distTable[i] = row;
+    } else {
+        distTable = table;
     }
 
     var renderedTable = templates.distTable({
@@ -100,7 +103,7 @@ function calc() {
     $.ajax({
         type: "POST",
         contentType: "application/json",
-        url: "/calc",
+        url: "/calculate",
         data: JSON.stringify({size: distTable.length, arr: distTable})
     })
         .done(function (msg) {
@@ -160,6 +163,17 @@ function renderResults(results) {
 
     var $renderedRows = $(renderedRows);
     $renderedRows.appendTo($resultsTable);
+}
+
+function fillTestData() {
+    distTable = [
+        [0, 4, 6, 2, 13],
+        [4, 0, 3, 2, 13],
+        [6, 3, 0, 5, 13],
+        [2, 2, 5, 0, 8],
+        [13, 13, 13, 8, 0]];
+
+    setSize(distTable.length, distTable);
 }
 
 Array.prototype.remove = function (item) {
