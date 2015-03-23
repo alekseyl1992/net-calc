@@ -30,3 +30,8 @@ input {
 table input {
     text-align: center;
 }
+
+.index {
+    font-weight: bold;
+    vertical-align: middle !important;
+}
