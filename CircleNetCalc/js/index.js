@@ -31,8 +31,7 @@ function loadTemplates() {
     templates = {
         stage1: Handlebars.compile($('#stage1-template').html()),
         stage2: Handlebars.compile($('#stage2-template').html()),
-        stage3: Handlebars.compile($('#stage3-template').html()),
-        resultsRow: Handlebars.compile($('#results-row-template').html())
+        stage3: Handlebars.compile($('#stage3-template').html())
     };
 }
 
@@ -205,7 +204,7 @@ function buildPath(nodes) {
 }
 
 function renderResults(results) {
-    var renderedRows = templates.resultsRow({
+    var renderedRows = templates.stage3({
         results: results
     });
 

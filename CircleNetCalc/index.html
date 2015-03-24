@@ -80,36 +80,32 @@
                 </tr>
                 </thead>
                 <tbody>
-                    <!-- Place for results-row-template -->
+                {{#each results}}
+                <tr>
+                    <td>{{sum @index 1}}</td>
+                    <td>{{method}}</td>
+                    <td>
+                        {{#each values}}
+                        {{edges}}<br>
+                        {{/each}}
+                    </td>
+                    <td>
+                        {{#each values}}
+                        {{path}}<br>
+                        {{/each}}
+                    </td>
+                    <td>
+                        {{#each values}}
+                        {{l}}<br>
+                        {{/each}}
+                    </td>
+                </tr>
+                {{/each}}
                 </tbody>
             </table>
         </div>
     </script>
     </section>
-
-    <script id="results-row-template" language="text/html">
-        {{#each results}}
-        <tr>
-            <td>{{sum @index 1}}</td>
-            <td>{{method}}</td>
-            <td>
-                {{#each values}}
-                {{edges}}
-                {{/each}}
-            </td>
-            <td>
-                {{#each values}}
-                {{path}}<br>
-                {{/each}}
-            </td>
-            <td>
-                {{#each values}}
-                {{l}}<br>
-                {{/each}}
-            </td>
-        </tr>
-        {{/each}}
-    </script>
 </div>
 
 <footer class="footer">
