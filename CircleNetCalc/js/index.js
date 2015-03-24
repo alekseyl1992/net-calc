@@ -1,22 +1,10 @@
 
 var templates = {};
+var stages = {};
 
 var distTable = [];
 
 $(function () {
-    var $setSizeButton = $('#set-size');
-    var $sizeInput = $('#size');
-
-    $setSizeButton.click(function () {
-        setSize(parseInt($sizeInput.val()));
-    });
-
-    var $calcButton = $('#calc');
-    $calcButton.click(function () {
-        calc();
-    });
-
-
     // handlebars setup
     Handlebars.registerHelper('sum', function() {
         var sum = 0, v;
@@ -27,12 +15,45 @@ $(function () {
         return sum;
     });
 
-    var distTableHtml = $('#dist-table-template').html();
-    templates.distTable = Handlebars.compile(distTableHtml);
+    loadTemplates();
+    findStages();
 
-    var resultsRowHtml = $('#results-row-template').html();
-    templates.resultsRow = Handlebars.compile(resultsRowHtml);
+    var $stage = showStage(stages.stage1, templates.stage1());
+    var $setSizeButton = $stage.find('#set-size');
+    var $sizeInput = $stage.find('#size');
+
+    $setSizeButton.click(function () {
+        setSize(parseInt($sizeInput.val()));
+    });
 });
+
+function loadTemplates() {
+    templates = {
+        stage1: Handlebars.compile($('#stage1-template').html()),
+        stage2: Handlebars.compile($('#stage2-template').html()),
+        stage3: Handlebars.compile($('#stage3-template').html()),
+        resultsRow: Handlebars.compile($('#results-row-template').html())
+    };
+}
+
+function findStages() {
+    stages = {
+        stage1: $('#stage1'),
+        stage2: $('#stage2'),
+        stage3: $('#stage3')
+    };
+}
+
+function showStage($stage, html) {
+    $stage.empty().off("*");
+    var $html = $(html);
+
+    $stage.hide();
+    $html.appendTo($stage);
+    $stage.fadeIn('slow');
+
+    return $html;
+}
 
 function setSize(size, table) {
     if (!table) {
@@ -51,12 +72,12 @@ function setSize(size, table) {
         distTable = table;
     }
 
-    var renderedTable = templates.distTable({
+    var html = templates.stage2({
         rows: distTable
     });
-    var $renderedTable = $(renderedTable);
+    var $stage = showStage(stages.stage2, html);
 
-    $renderedTable.find('input').on('input', function () {
+    $stage.find('input').on('input', function () {
         var $cell = $(this);
         var value = parseFloat($cell.val());
 
@@ -75,9 +96,10 @@ function setSize(size, table) {
         $mirrorCell.val(value);
     });
 
-    var $distTableWrapper = $('#dist-table-wrapper');
-    $distTableWrapper.empty();
-    $renderedTable.appendTo($distTableWrapper);
+    var $calcButton = $stage.find('#calc');
+    $calcButton.click(function () {
+        calc();
+    });
 }
 
 function calc() {
@@ -100,21 +122,36 @@ function calc() {
     //var preparedResults = prepareResults(msg);
     //renderResults(preparedResults);
 
-    $.ajax({
-        type: "POST",
-        contentType: "application/json",
-        url: "/calculate",
-        data: JSON.stringify({size: distTable.length, arr: distTable})
-    })
-        .done(function (msg) {
-            var preparedResults = prepareResults(msg);
-            renderResults(preparedResults);
+    // project will work both in Qt5 HTML App and via AJAX
+    if (window.Qt && !window.myAppViewer) {
+        alert("Qt && !myAppViewer");
+    }
+
+    if (window.myAppViewer) {
+        var msg = myAppViewer.calc(JSON.stringify({
+            size: distTable.length,
+            arr: distTable
+        }));
+
+        var preparedResults = prepareResults(msg);
+        renderResults(preparedResults);
+    } else {
+        $.ajax({
+            type: "POST",
+            contentType: "application/json",
+            url: "/calculate",
+            data: JSON.stringify({size: distTable.length, arr: distTable})
         })
-        .fail(function (error) {
-            console.log("AJAX error: ", error);
-            alert("AJAX Error, watch your console log");
-        }
-    );
+            .done(function (msg) {
+                var preparedResults = prepareResults(msg);
+                renderResults(preparedResults);
+            })
+            .fail(function (error) {
+                console.log("AJAX error: ", error);
+                alert("AJAX Error, watch your console log");
+            }
+        );
+    }
 }
 
 function prepareResults(entries) {
@@ -132,8 +169,13 @@ function prepareResults(entries) {
 }
 
 function buildPath(nodes) {
+    var edges = [];
     var path = [];
     var l = 0;
+
+    edges = _.map(nodes, function (node) {
+        return node.from + "-" + node.to;
+    });
 
     var nextNode = nodes[0];
     path.push(nextNode.from);
@@ -156,21 +198,18 @@ function buildPath(nodes) {
     });
 
     return {
+        edges: edges.join(', '),
         path: path.join('-'),
         l: l
     };
 }
 
 function renderResults(results) {
-    var $resultsTable = $('#results-table').find('tbody');
-    $resultsTable.empty();
-
     var renderedRows = templates.resultsRow({
         results: results
     });
 
-    var $renderedRows = $(renderedRows);
-    $renderedRows.appendTo($resultsTable);
+    showStage(stages.stage3, renderedRows);
 }
 
 function fillTestData() {

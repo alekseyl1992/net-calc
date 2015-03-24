@@ -1,5 +1,11 @@
+html {
+    position: relative;
+    min-height: 100%;
+}
+
 body {
     font-size: large;
+    margin-bottom: 80px;
 }
 
 #size {
@@ -29,9 +35,20 @@ input {
 
 table input {
     text-align: center;
+    min-width: 4em;
 }
 
 .index {
     font-weight: bold;
     vertical-align: middle !important;
+}
+
+.footer {
+    position: absolute;
+    bottom: 0;
+    background-color: #f5f5f5;
+    padding-top: 1em;
+    height: 60px;
+    width: 100%;
+    font-size: small;
 }
