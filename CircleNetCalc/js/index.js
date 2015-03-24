@@ -173,7 +173,7 @@ function buildPath(nodes) {
     var l = 0;
 
     edges = _.map(nodes, function (node) {
-        return node.from + "-" + node.to;
+        return (node.from + 1) + "-" + (node.to + 1);
     });
 
     var nextNode = nodes[0];
