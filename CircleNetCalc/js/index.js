@@ -160,7 +160,7 @@ function prepareResults(entries) {
 }
 
 function uniqResults(sourceResults) {
-	var results [];
+	var results = [];
 
 	return _.each(sourceResults, function (newResult) {
 		var dup = _.find(results, function (oldResult) {
