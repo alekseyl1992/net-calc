@@ -104,7 +104,7 @@ function setSize(size, table) {
 function calc() {
     var valid = _.all(distTable, function (row) {
         return _.all(row, function (value) {
-            return value != null;
+            return value != null && !_.isNaN(value);
         });
     });
 
