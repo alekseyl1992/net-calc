@@ -76,7 +76,7 @@ function setSize(size, table) {
     });
     var $stage = showStage(stages.stage2, html);
 
-    var $inputs = $stage.find('input');
+    var $inputs = $stage.find('input[type="text"]');
     $inputs.each(function(idx, input) {
         var $input = $(input);
 

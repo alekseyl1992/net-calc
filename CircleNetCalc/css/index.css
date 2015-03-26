@@ -42,7 +42,7 @@ table input {
 }
 
 table input:disabled {
-    cursor: text;
+    cursor: text !important;
 }
 
 .index {
