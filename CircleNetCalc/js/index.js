@@ -88,8 +88,10 @@ function setSize(size, table) {
         distTable[i][j] = value;
         distTable[j][i] = value;
 
-        if (i == j)
+        if (i == j) {
+            $cell.attr('disabled', 'disabled');
             return;
+        }
 
         var $mirrorCell = $('#cell-' + j + '-' + i);
         $mirrorCell.val(value);
