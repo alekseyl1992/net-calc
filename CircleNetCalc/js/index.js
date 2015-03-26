@@ -78,7 +78,7 @@ function setSize(size, table) {
 
     var $inputs = $stage.find('input');
     $inputs.each(function(idx, $input) {
-        var id = $cell.attr('id').split('-');
+        var id = $input.attr('id').split('-');
         var i = id[1];
         var j = id[2];
 
