@@ -41,6 +41,10 @@ table input {
     min-width: 4em;
 }
 
+table input:disabled {
+    cursor: text;
+}
+
 .index {
     font-weight: bold;
     vertical-align: middle !important;
