@@ -164,7 +164,7 @@ function uniqResults(sourceResults) {
 
 	return _.each(sourceResults, function (newResult) {
 		var dup = _.find(results, function (oldResult) {
-			return compareArrays(newResult, oldResult):
+			return compareArrays(newResult, oldResult);
 		});
 
 		if (!dup) {
