@@ -76,7 +76,17 @@ function setSize(size, table) {
     });
     var $stage = showStage(stages.stage2, html);
 
-    $stage.find('input').on('input', function () {
+    var $inputs = $stage.find('input');
+    $inputs.each(function(idx, $input) {
+        var id = $cell.attr('id').split('-');
+        var i = id[1];
+        var j = id[2];
+
+        if (i == j)
+            $input.prop('disabled', true);
+    });
+
+    $inputs.on('input', function () {
         var $cell = $(this);
         var value = parseFloat($cell.val());
 
@@ -88,10 +98,8 @@ function setSize(size, table) {
         distTable[i][j] = value;
         distTable[j][i] = value;
 
-        if (i == j) {
-            $cell.prop('disabled', true);
+        if (i == j)
             return;
-        }
 
         var $mirrorCell = $('#cell-' + j + '-' + i);
         $mirrorCell.val(value);
