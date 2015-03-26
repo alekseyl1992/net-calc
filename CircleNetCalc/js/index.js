@@ -63,7 +63,7 @@ function setSize(size, table) {
                 if (i == j)
                     row[j] = 0;
                 else
-                    row[j] = undefined;
+                    row[j] = null;
             }
             distTable[i] = row;
         }
@@ -102,24 +102,16 @@ function setSize(size, table) {
 }
 
 function calc() {
-    //var msg = {
-    //    nn_alg: {
-    //        name: "Nearest Neighbor Algorithm",
-    //        results: [
-    //            [
-    //                {from: 1, to: 2, distance: 1},
-    //                {from: 2, to: 1, distance: 2}
-    //            ],
-    //            [
-    //                {from: 1, to: 2, distance: 2},
-    //                {from: 2, to: 1, distance: 3}
-    //            ]
-    //        ]
-    //    }
-    //};
-    //
-    //var preparedResults = prepareResults(msg);
-    //renderResults(preparedResults);
+    var valid = _.all(distTable, function (row) {
+        return _.all(row, function (value) {
+            return value != null;
+        });
+    });
+
+    if (!valid) {
+        alert("Incorrect data!");
+        return;
+    }
 
     // project will work both in Qt5 HTML App and via AJAX
     if (window.Qt && !window.myAppViewer) {
@@ -127,10 +119,10 @@ function calc() {
     }
 
     if (window.myAppViewer) {
-        var msg = myAppViewer.calc(JSON.stringify({
+        var msg = JSON.parse(myAppViewer.calc(JSON.stringify({
             size: distTable.length,
             arr: distTable
-        }));
+        })));
 
         var preparedResults = prepareResults(msg);
         renderResults(preparedResults);
