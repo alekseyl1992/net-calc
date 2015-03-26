@@ -89,7 +89,7 @@ function setSize(size, table) {
         distTable[j][i] = value;
 
         if (i == j) {
-            $cell.attr('disabled', 'disabled');
+            $cell.prop('disabled', true);
             return;
         }
 
