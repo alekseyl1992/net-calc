@@ -149,7 +149,7 @@ function prepareResults(entries) {
     return _.map(entries, function (entry) {
         return {
             method: entry.name,
-            values: _.uniq(_.sortBy(_.map(entry.results, function (result) {
+            values: _.uniq(_.sortBy(_.map(uniqResults(entry.results), function (result) {
                 return buildPath(result);
             }), 'l'),
                 function (value) {
@@ -157,6 +157,31 @@ function prepareResults(entries) {
                 })
         };
     });
+}
+
+function uniqResults(sourceResults) {
+	var results [];
+
+	return _.each(sourceResults, function (newResult) {
+		var dup = _.find(results, function (oldResult) {
+			return compareArrays(newResult, oldResult):
+		});
+
+		if (!dup) {
+			results.push(newResult);
+		}
+	});
+
+	return results;
+}
+
+function compareArrays(oldResult, newResult) {
+	return _.all(oldResult, function (oldNode) {
+		return _.find(newResult, function (newNode) {
+			return (newNode.from == oldNode.from && newNode.to == oldNode.to)
+				|| (newNode.from == oldNode.to && newNode.to == oldNode.from);
+		});
+	});
 }
 
 function buildPath(nodes) {
