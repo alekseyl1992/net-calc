@@ -126,6 +126,7 @@ function calc() {
     }
 
     // project will work both in Qt5 HTML App and via AJAX
+    // and via emscripten
     if (window.Qt && !window.myAppViewer) {
         alert("Qt && !myAppViewer");
     }
@@ -138,7 +139,19 @@ function calc() {
 
         var preparedResults = prepareResults(msg);
         renderResults(preparedResults);
+    } else if (_calculate) {
+        var calcFun = Module.cwrap('calculate', 'string', ['string']);
+
+        var data = JSON.stringify({
+            size: distTable.length,
+            arr: distTable
+        });
+
+        var result = JSON.parse(calcFun(data));
+        var preparedResults = prepareResults(result);
+        renderResults(preparedResults);
     } else {
+
         $.ajax({
             type: "POST",
             contentType: "application/json",
